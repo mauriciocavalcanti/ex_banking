@@ -3,6 +3,8 @@ defmodule ExBanking do
   Documentation for ExBanking.
   """
 
+  alias Banking.{User, Transaction}
+
   @type banking_error ::
           {:error,
            :wrong_arguments
@@ -16,19 +18,19 @@ defmodule ExBanking do
            | :too_many_requests_to_receiver}
 
   @spec create_user(user :: String.t()) :: :ok | banking_error
-  defdelegate create_user(user), to:
+  defdelegate create_user(user), to: User
 
   @spec deposit(user :: String.t(), amount :: number, currency :: String.t()) ::
           {:ok, new_balance :: number} | banking_error
-  defdelegate deposit(user, amount, currency), to:
+  defdelegate deposit(user, amount, currency), to: Transaction
 
   @spec withdraw(user :: String.t(), amount :: number, currency :: String.t()) ::
           {:ok, new_balance :: number} | banking_error
-  defdelegate withdraw(user, amount, currency), to:
+  defdelegate withdraw(user, amount, currency), to: Transaction
 
   @spec get_balance(user :: String.t(), currency :: String.t()) ::
           {:ok, balance :: number} | banking_error
-  defdelegate get_balance(user, currency), to:
+  defdelegate get_balance(user, currency), to: Transaction
 
   @spec send(
           from_user :: String.t(),
@@ -36,6 +38,6 @@ defmodule ExBanking do
           amount :: number,
           currency :: String.t()
         ) :: {:ok, from_user_balance :: number, to_user_balance :: number} | banking_error
-  defdelegate(from_user, to_user, amount, currency), to:
+  defdelegate send(from_user, to_user, amount, currency), to: Transaction
 
 end
