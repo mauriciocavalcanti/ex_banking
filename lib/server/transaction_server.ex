@@ -10,8 +10,10 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call(%{:deposit => {currency, amount}}, _from, state) do
-    state = Map.put_new(state, currency, amount)
-    {:reply, state[currency], state}
+    current_balance = Map.get(state, currency, 0.0)
+    new_balance = current_balance + amount
+    state = Map.put(state, currency, new_balance)
+    {:reply, new_balance, state}
   end
 
   def handle_call(%{:withdraw => {currency, amount}}, _from, state) do
