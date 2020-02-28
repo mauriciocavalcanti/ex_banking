@@ -10,7 +10,13 @@ defmodule Banking.Transaction do
         new_balance =
           GenServer.call(String.to_atom(user), %{:deposit => {currency, to_decimal(amount)}})
 
-        {:ok, new_balance}
+        case new_balance do
+          :too_many_requests_to_user ->
+            {:error, :too_many_requests_to_user}
+
+          _ ->
+            {:ok, new_balance}
+        end
     end
   end
 
@@ -27,6 +33,7 @@ defmodule Banking.Transaction do
 
         case new_balance do
           :not_enough_money -> {:error, :not_enough_money}
+          :too_many_requests_to_user -> {:error, :too_many_requests_to_user}
           _ -> {:ok, new_balance}
         end
     end
@@ -41,7 +48,14 @@ defmodule Banking.Transaction do
 
       _ ->
         balance = GenServer.call(String.to_atom(user), {:get_balance, currency})
-        {:ok, balance}
+
+        case balance do
+          :too_many_requests_to_user ->
+            {:error, :too_many_requests_to_user}
+
+          _ ->
+            {:ok, balance}
+        end
     end
   end
 
@@ -60,12 +74,21 @@ defmodule Banking.Transaction do
 
       {_, _} ->
         both_balance =
-        GenServer.call(String.to_atom(from_user), %{
-          :send => {currency, to_decimal(amount)},
-          :receiver => to_user
-        })
+          GenServer.call(String.to_atom(from_user), %{
+            :send => {currency, to_decimal(amount)},
+            :receiver => to_user
+          })
+
         case both_balance do
-          :not_enough_money -> {:error, :not_enough_money}
+          :not_enough_money ->
+            {:error, :not_enough_money}
+
+          :too_many_requests_to_sender ->
+            {:error, :too_many_requests_to_sender}
+
+          :too_many_requests_to_receiver ->
+            {:error, :too_many_requests_to_receiver}
+
           _ ->
             {from_balance, to_balance} = both_balance
             {:ok, from_balance, to_balance}
