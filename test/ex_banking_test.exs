@@ -4,38 +4,38 @@ defmodule ExBankingTest do
 
   describe "create_user" do
     test "success creating user" do
-      assert :ok == ExBanking.create_user("user")
+      assert :ok == ExBanking.create_user("my user")
     end
 
     test "wrong arguments" do
-      assert {:error, :user_already_exists} == ExBanking.create_user(000)
+      assert {:error, :wrong_arguments} == ExBanking.create_user(000)
     end
 
     test "user already exists" do
-      ExBanking.create_user("user")
-      assert {:error, :user_already_exists} == ExBanking.create_user("user")
+      ExBanking.create_user("my user")
+      assert {:error, :user_already_exists} == ExBanking.create_user("my user")
     end
   end
 
   describe "deposit" do
     test "success depositing to user" do
-      ExBanking.create_user("user")
-      assert {:ok, 100.0} == ExBanking.deposit("user", 100, "BRL")
+      ExBanking.create_user("my user")
+      assert {:ok, 100.0} == ExBanking.deposit("my user", 100, "BRL")
     end
   end
 
   describe "withdraw" do
     test "success withdrawing from user" do
-      ExBanking.create_user("user")
-      ExBanking.deposit("user", 100, "BRL")
-      assert {:ok, 50.0} == ExBanking.withdraw("user", 50, "BRL")
+      ExBanking.create_user("my user")
+      ExBanking.deposit("my user", 100, "BRL")
+      assert {:ok, 50.0} == ExBanking.withdraw("my user", 50, "BRL")
     end
   end
 
   describe "get_balance" do
     test "success getting balance from user" do
-      ExBanking.create_user("user")
-      assert {:ok, 0.0} == ExBanking.get_balance("user", "BRL")
+      ExBanking.create_user("my user")
+      assert {:ok, 0.0} == ExBanking.get_balance("my user", "BRL")
     end
   end
 
