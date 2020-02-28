@@ -22,6 +22,16 @@ defmodule ExBankingTest do
       ExBanking.create_user("my user")
       assert {:ok, 100.0} == ExBanking.deposit("my user", 100, "BRL")
     end
+
+    test "wrong_arguments" do
+      ExBanking.create_user("my user")
+      assert {:error, :wrong_arguments} == ExBanking.deposit("my user", -100, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.deposit("my user", 100, 123)
+    end
+
+    test "user does not exist" do
+      assert {:error, :user_does_not_exist} == ExBanking.deposit("I don't exist", 100, "BRL")
+    end
   end
 
   describe "withdraw" do
