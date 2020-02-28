@@ -98,7 +98,7 @@ defmodule ExBankingTest do
     end
 
     test "not enough money" do
-      assert {:error, :wrong_arguments} == ExBanking.send("from_user", "to_user", 5000, "BRL")
+      assert {:error, :not_enough_money} == ExBanking.send("from_user", "to_user", 5000, "BRL")
     end
   end
 end

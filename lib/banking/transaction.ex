@@ -47,6 +47,31 @@ defmodule Banking.Transaction do
 
   def get_balance(_, _), do: {:error, :wrong_arguments}
 
-  def send(from_user, to_user, amount, currency) do
+  def send(from_user, to_user, amount, currency)
+      when from_user != to_user and amount > 0 and is_binary(currency) and is_binary(from_user) and
+             is_binary(to_user) do
+    case {GenServer.whereis(String.to_atom(from_user)),
+          GenServer.whereis(String.to_atom(to_user))} do
+      {nil, _} ->
+        {:error, :sender_does_not_exist}
+
+      {_, nil} ->
+        {:error, :receiver_does_not_exist}
+
+      {_, _} ->
+        both_balance =
+        GenServer.call(String.to_atom(from_user), %{
+          :send => {currency, to_decimal(amount)},
+          :receiver => to_user
+        })
+        case both_balance do
+          :not_enough_money -> {:error, :not_enough_money}
+          _ ->
+            {from_balance, to_balance} = both_balance
+            {:ok, from_balance, to_balance}
+        end
+    end
   end
+
+  def send(_, _, _, _), do: {:error, :wrong_arguments}
 end
