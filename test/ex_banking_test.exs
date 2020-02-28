@@ -74,11 +74,31 @@ defmodule ExBankingTest do
   end
 
   describe "send" do
+    ExBanking.create_user("from_user")
+    ExBanking.create_user("to_user")
+    ExBanking.deposit("from_user", 100, "BRL")
+
     test "success sending amount from user to user" do
-      ExBanking.create_user("from_user")
-      ExBanking.create_user("to_user")
-      ExBanking.deposit("from_user", 100, "BRL")
       assert {:ok, 50.0, 50.0} == ExBanking.send("from_user", "to_user", 50, "BRL")
+    end
+
+    test "sender does not exist" do
+      assert {:error, :sender_does_not_exist} == ExBanking.send("I don't exist", "to_user", 50, "BRL")
+    end
+
+    test "receiver does not exist" do
+      assert {:error, :receiver_does_not_exist} == ExBanking.send("from_user", "I don't exist", 50, "BRL")
+    end
+
+    test "wrong arguments" do
+      assert {:error, :wrong_arguments} == ExBanking.send("from_user", "to_user", 50, 123)
+      assert {:error, :wrong_arguments} == ExBanking.send("from_user", "from_user", 50, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.send(123, "to_user", 50, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.send("from_user", 123, 50, "BRL")
+    end
+
+    test "not enough money" do
+      assert {:error, :wrong_arguments} == ExBanking.send("from_user", "to_user", 5000, "BRL")
     end
   end
 end
