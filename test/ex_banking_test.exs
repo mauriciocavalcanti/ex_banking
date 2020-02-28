@@ -83,11 +83,13 @@ defmodule ExBankingTest do
     end
 
     test "sender does not exist" do
-      assert {:error, :sender_does_not_exist} == ExBanking.send("I don't exist", "to_user", 50, "BRL")
+      assert {:error, :sender_does_not_exist} ==
+               ExBanking.send("I don't exist", "to_user", 50, "BRL")
     end
 
     test "receiver does not exist" do
-      assert {:error, :receiver_does_not_exist} == ExBanking.send("from_user", "I don't exist", 50, "BRL")
+      assert {:error, :receiver_does_not_exist} ==
+               ExBanking.send("from_user", "I don't exist", 50, "BRL")
     end
 
     test "wrong arguments" do
@@ -99,6 +101,20 @@ defmodule ExBankingTest do
 
     test "not enough money" do
       assert {:error, :not_enough_money} == ExBanking.send("from_user", "to_user", 5000, "BRL")
+    end
+  end
+
+  describe "process limiter" do
+    ExBanking.create_user("processes")
+
+    for n <- 0..100 do
+      Task.async(fn -> ExBanking.deposit("processes", 10, "currency") end)
+    end
+    |> Enum.map(&Task.await/1)
+
+    test "balance should be less than 1000" do
+      {:ok, balance} = ExBanking.get_balance("processes", "currency")
+      assert balance < 1000
     end
   end
 end

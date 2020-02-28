@@ -54,7 +54,7 @@ defmodule Banking.Transaction do
             {:error, :too_many_requests_to_user}
 
           _ ->
-            {:ok, balance}
+            {:ok, to_decimal(balance)}
         end
     end
   end
