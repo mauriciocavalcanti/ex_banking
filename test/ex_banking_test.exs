@@ -22,11 +22,16 @@ defmodule ExBankingTest do
 
     test "success depositing to user" do
       assert {:ok, 100.0} == ExBanking.deposit("deposit", 100, "BRL")
+      assert {:ok, 1100.0} == ExBanking.deposit("deposit", 1000, "BRL")
+      assert {:ok, 1199.99} == ExBanking.deposit("deposit", 99.99, "BRL")
+      assert {:ok, 10_001_199.99} == ExBanking.deposit("deposit", 10_000_000.00000111, "BRL")
     end
 
     test "wrong_arguments" do
       assert {:error, :wrong_arguments} == ExBanking.deposit("any user", -100, "BRL")
       assert {:error, :wrong_arguments} == ExBanking.deposit("any user", 100, 123)
+      assert {:error, :wrong_arguments} == ExBanking.deposit(123, 100, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.deposit("any user", "100", "BRL")
     end
 
     test "user does not exist" do
@@ -36,15 +41,21 @@ defmodule ExBankingTest do
 
   describe "withdraw" do
     ExBanking.create_user("withdraw")
-    ExBanking.deposit("withdraw", 100, "BRL")
+    ExBanking.create_user("no more money")
+    ExBanking.deposit("withdraw", 100_000, "BRL")
 
     test "success withdrawing from user" do
-      assert {:ok, 50.0} == ExBanking.withdraw("withdraw", 50, "BRL")
+      assert {:ok, 99950.0} == ExBanking.withdraw("withdraw", 50, "BRL")
+      assert {:ok, 99849.88} == ExBanking.withdraw("withdraw", 100.12, "BRL")
+      assert {:ok, 849.88} == ExBanking.withdraw("withdraw", 99000, "BRL")
+      assert {:ok, 0.0} == ExBanking.withdraw("withdraw", 849.88, "BRL")
     end
 
     test "wrong arguments" do
       assert {:error, :wrong_arguments} == ExBanking.withdraw("any user", -100, "BRL")
       assert {:error, :wrong_arguments} == ExBanking.withdraw("any user", 100, 123)
+      assert {:error, :wrong_arguments} == ExBanking.withdraw(123, 100, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.withdraw("any user", "100", "BRL")
     end
 
     test "user does not exist" do
@@ -52,7 +63,7 @@ defmodule ExBankingTest do
     end
 
     test "not enough money" do
-      assert {:error, :not_enough_money} == ExBanking.withdraw("withdraw", 100, "BRL")
+      assert {:error, :not_enough_money} == ExBanking.withdraw("no more money", 1000, "BRL")
     end
   end
 
@@ -97,6 +108,7 @@ defmodule ExBankingTest do
       assert {:error, :wrong_arguments} == ExBanking.send("from_user", "from_user", 50, "BRL")
       assert {:error, :wrong_arguments} == ExBanking.send(123, "to_user", 50, "BRL")
       assert {:error, :wrong_arguments} == ExBanking.send("from_user", 123, 50, "BRL")
+      assert {:error, :wrong_arguments} == ExBanking.send("from_user", "to_user", "50", "BRL")
     end
 
     test "not enough money" do
@@ -107,10 +119,9 @@ defmodule ExBankingTest do
   describe "process limiter" do
     ExBanking.create_user("processes")
 
-    for n <- 0..100 do
+    for _n <- 1..100 do
       Task.async(fn -> ExBanking.deposit("processes", 10, "currency") end)
     end
-    |> Enum.map(&Task.await/1)
 
     test "balance should be less than 1000" do
       {:ok, balance} = ExBanking.get_balance("processes", "currency")

@@ -4,7 +4,8 @@ defmodule Banking.Transaction do
   """
   import Helper
 
-  def deposit(user, amount, currency) when amount > 0 and is_binary(currency) do
+  def deposit(user, amount, currency)
+      when is_number(amount) and amount > 0 and is_binary(currency) and is_binary(user) do
     case GenServer.whereis(String.to_atom(user)) do
       nil ->
         {:error, :user_does_not_exist}
@@ -18,14 +19,15 @@ defmodule Banking.Transaction do
             {:error, :too_many_requests_to_user}
 
           _ ->
-            {:ok, new_balance}
+            {:ok, to_decimal(new_balance)}
         end
     end
   end
 
   def deposit(_, _, _), do: {:error, :wrong_arguments}
 
-  def withdraw(user, amount, currency) when amount > 0 and is_binary(currency) do
+  def withdraw(user, amount, currency)
+      when is_number(amount) and amount > 0 and is_binary(currency) and is_binary(user) do
     case GenServer.whereis(String.to_atom(user)) do
       nil ->
         {:error, :user_does_not_exist}
@@ -37,7 +39,7 @@ defmodule Banking.Transaction do
         case new_balance do
           :not_enough_money -> {:error, :not_enough_money}
           :too_many_requests_to_user -> {:error, :too_many_requests_to_user}
-          _ -> {:ok, new_balance}
+          _ -> {:ok, to_decimal(new_balance)}
         end
     end
   end
@@ -65,8 +67,8 @@ defmodule Banking.Transaction do
   def get_balance(_, _), do: {:error, :wrong_arguments}
 
   def send(from_user, to_user, amount, currency)
-      when from_user != to_user and amount > 0 and is_binary(currency) and is_binary(from_user) and
-             is_binary(to_user) do
+      when is_number(amount) and from_user != to_user and amount > 0 and is_binary(currency) and
+             is_binary(from_user) and is_binary(to_user) do
     case {GenServer.whereis(String.to_atom(from_user)),
           GenServer.whereis(String.to_atom(to_user))} do
       {nil, _} ->
@@ -101,7 +103,7 @@ defmodule Banking.Transaction do
 
       _ ->
         {from_balance, to_balance} = reply
-        {:ok, from_balance, to_balance}
+        {:ok, to_decimal(from_balance), to_decimal(to_balance)}
     end
   end
 end
