@@ -82,22 +82,26 @@ defmodule Banking.Transaction do
             :receiver => to_user
           })
 
-        case both_balance do
-          :not_enough_money ->
-            {:error, :not_enough_money}
-
-          :too_many_requests_to_sender ->
-            {:error, :too_many_requests_to_sender}
-
-          :too_many_requests_to_receiver ->
-            {:error, :too_many_requests_to_receiver}
-
-          _ ->
-            {from_balance, to_balance} = both_balance
-            {:ok, from_balance, to_balance}
-        end
+        check_send_reply(both_balance)
     end
   end
 
   def send(_, _, _, _), do: {:error, :wrong_arguments}
+
+  defp check_send_reply(reply) do
+    case reply do
+      :not_enough_money ->
+        {:error, :not_enough_money}
+
+      :too_many_requests_to_sender ->
+        {:error, :too_many_requests_to_sender}
+
+      :too_many_requests_to_receiver ->
+        {:error, :too_many_requests_to_receiver}
+
+      _ ->
+        {from_balance, to_balance} = reply
+        {:ok, from_balance, to_balance}
+    end
+  end
 end
