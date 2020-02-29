@@ -1,21 +1,28 @@
 # ExBanking
 
-**TODO: Add description**
+Simple OTP application, using GenServer and DynamicSupervisor to create users, 
+deposit in any currency, withdraw, send from one user to another and get the current balance.
+Currently, limited to 10 operations per user. Each user is a supervised process.
+Using virtual memory shared between process states.
+ 
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_banking` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:ex_banking, "~> 0.1.0"}
-  ]
-end
+Running the project:
+Make sure to have [elixir](https://elixir-lang.org) installed.
+To run test cases, open terminal on root directory and write:
+```
+$ mix test
+```
+To run project via command line:
+```
+$ iex -S mix
+```
+For more information about function specs, view docs:
+```
+$ mix deps.get
+$ mix docs
+$ start doc/index.html
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/ex_banking](https://hexdocs.pm/ex_banking).
 
