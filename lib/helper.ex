@@ -1,4 +1,7 @@
 defmodule Helper do
+  @moduledoc """
+  Set of helper functions
+  """
   def to_decimal(number) do
     number
     |> Decimal.cast()

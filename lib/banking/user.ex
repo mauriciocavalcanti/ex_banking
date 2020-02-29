@@ -1,4 +1,7 @@
 defmodule Banking.User do
+  @moduledoc """
+  Client for user
+  """
   alias Server.UserSupervisor
 
   def create_user(user) when is_binary(user) do

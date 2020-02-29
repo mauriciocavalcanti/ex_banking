@@ -1,4 +1,7 @@
 defmodule Banking.Application do
+  @moduledoc """
+  Application start that initializes Supervisor
+  """
   use Application
 
   def start(_type, _args) do

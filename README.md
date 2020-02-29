@@ -8,8 +8,8 @@ Using virtual memory shared between process states.
 
 ## Installation
 
-Running the project:
-Make sure to have [elixir](https://elixir-lang.org) installed.
+Running the project:\
+Make sure to have [elixir](https://elixir-lang.org) installed.\
 To run test cases, open terminal on root directory and write:
 ```
 $ mix test
@@ -24,5 +24,3 @@ $ mix deps.get
 $ mix docs
 $ start doc/index.html
 ```
-
-

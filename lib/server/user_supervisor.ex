@@ -1,4 +1,7 @@
 defmodule Server.UserSupervisor do
+  @moduledoc """
+  DynamicSupervisor for user processes
+  """
   use DynamicSupervisor
 
   def start_link() do

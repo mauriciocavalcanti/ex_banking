@@ -1,4 +1,7 @@
 defmodule Banking.Transaction do
+  @moduledoc """
+  Client for transactions
+  """
   import Helper
 
   def deposit(user, amount, currency) when amount > 0 and is_binary(currency) do

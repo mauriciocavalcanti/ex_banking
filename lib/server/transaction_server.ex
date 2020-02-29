@@ -1,4 +1,7 @@
 defmodule Server.TransactionServer do
+  @moduledoc """
+  GenServer for handling calls for transactions in the ExBanking
+  """
   use GenServer
 
   import Helper
@@ -14,7 +17,7 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call(%{:deposit => {currency, amount}}, _from, state) do
-    if is_limit_reached?() do
+    if limit_reached?() do
       {:reply, :too_many_requests_to_user, state}
     else
       current_balance = Map.get(state, currency, 0.0)
@@ -25,7 +28,7 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call(%{:withdraw => {currency, amount}}, _from, state) do
-    if is_limit_reached?() do
+    if limit_reached?() do
       {:reply, :too_many_requests_to_user, state}
     else
       current_balance = Map.get(state, currency, 0.0)
@@ -41,7 +44,7 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call({:get_balance, currency}, _from, state) do
-    if is_limit_reached?() do
+    if limit_reached?() do
       {:reply, :too_many_requests_to_user, state}
     else
       balance = Map.get(state, currency, 0.0)
@@ -50,7 +53,7 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call(%{:send => {currency, amount}, :receiver => to_user}, _from, state) do
-    if is_limit_reached?() do
+    if limit_reached?() do
       {:reply, :too_many_requests_to_sender, state}
     else
       current_balance = Map.get(state, currency, 0.0)
@@ -75,7 +78,7 @@ defmodule Server.TransactionServer do
   end
 
   def handle_call(%{:receive => {currency, amount}}, _from, state) do
-    if is_limit_reached?() do
+    if limit_reached?() do
       {:reply, :too_many_requests_to_receiver, state}
     else
       current_balance = Map.get(state, currency, 0.0)
@@ -85,7 +88,7 @@ defmodule Server.TransactionServer do
     end
   end
 
-  def is_limit_reached? do
+  def limit_reached? do
     process = Process.info(self())
     process[:message_queue_len] > @process_queue_limit
   end
