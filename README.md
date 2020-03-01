@@ -23,5 +23,5 @@ For more information about function specs, view docs:
 ```
 $ mix deps.get
 $ mix docs
-$ start doc/index.html
 ```
+If on windows, use ``` $ start doc/index.html ```, if on mac ``` $ open doc/index.html ```, if on linux ``` $ xdg-open doc/index.html ```
