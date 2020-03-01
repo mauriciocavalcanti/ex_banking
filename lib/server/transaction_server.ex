@@ -59,7 +59,7 @@ defmodule Server.TransactionServer do
       current_balance = Map.get(state, currency, 0.0)
       new_balance = current_balance - amount
 
-      if new_balance <= 0 do
+      if new_balance < 0 do
         {:reply, :not_enough_money, state}
       else
         receiver_balance =

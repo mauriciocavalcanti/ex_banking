@@ -20,6 +20,10 @@ defmodule ExBanking do
   @doc """
   Function creates new user in the system
   New user has zero balance of any currency
+  ### Examples
+
+        iex> ExBanking.create_user("name")
+        :ok
 
   """
   @spec create_user(user :: String.t()) :: :ok | banking_error
@@ -28,6 +32,12 @@ defmodule ExBanking do
   @doc """
   Increases user’s balance in given currency by amount value
   Returns new_balance of the user in given format
+  ### Examples
+
+        iex> ExBanking.create_user("user to deposit")
+        :ok
+        iex> ExBanking.deposit("user to deposit", 1.22, "BRL")
+        {:ok, 1.22}
 
   """
   @spec deposit(user :: String.t(), amount :: number, currency :: String.t()) ::
@@ -37,6 +47,14 @@ defmodule ExBanking do
   @doc """
   Decreases user’s balance in given currency by amount value
   Returns new_balance of the user in given format
+  ### Examples
+
+        iex> ExBanking.create_user("user to withdraw")
+        :ok
+        iex> ExBanking.deposit("user to withdraw", 1.22, "BRL")
+        {:ok, 1.22}
+        iex> ExBanking.withdraw("user to withdraw", 1.22, "BRL")
+        {:ok, 0.0}
 
   """
   @spec withdraw(user :: String.t(), amount :: number, currency :: String.t()) ::
@@ -45,6 +63,12 @@ defmodule ExBanking do
 
   @doc """
   Returns balance of the user in given format
+  ### Examples
+
+        iex> ExBanking.create_user("user to get balance")
+        :ok
+        iex> ExBanking.get_balance("user to get balance", "BRL")
+        {:ok, 0.0}
 
   """
   @spec get_balance(user :: String.t(), currency :: String.t()) ::
@@ -55,6 +79,17 @@ defmodule ExBanking do
   Decreases from_user’s balance in given currency by amount value
   Increases to_user’s balance in given currency by amount value
   Returns balance of from_user and to_user in given format
+  ### Examples
+
+        iex> ExBanking.create_user("user to send")
+        :ok
+        iex> ExBanking.create_user("user to receive")
+        :ok
+        iex> ExBanking.deposit("user to send", 1.22, "BRL")
+        {:ok, 1.22}
+        iex> ExBanking.send("user to send", "user to receive", 1.22, "BRL")
+        {:ok, 0.0, 1.22}
+
   """
   @spec send(
           from_user :: String.t(),
