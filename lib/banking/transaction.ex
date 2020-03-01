@@ -34,7 +34,7 @@ defmodule Banking.Transaction do
 
       _ ->
         new_balance =
-          GenServer.call(String.to_atom(user), %{:withdraw => {currency, to_decimal(amount)}})
+          GenServer.call(String.to_atom(user), %{:withdraw => {currency, amount}})
 
         case new_balance do
           :not_enough_money -> {:error, :not_enough_money}
