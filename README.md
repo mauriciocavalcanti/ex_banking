@@ -12,6 +12,7 @@ Running the project:\
 Make sure to have [elixir](https://elixir-lang.org) installed.\
 To run test cases, open terminal on root directory and write:
 ```
+$ mix deps.get
 $ mix test
 ```
 To run project via command line:
